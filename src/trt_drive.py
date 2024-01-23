@@ -14,7 +14,7 @@ def callback(data) :
         print(bbox.id)
         print(bbox.x)
         obj_id = bbox.id
-	
+
 def drive_left():
 	print("drive_left")
 	global distance, motor_msg
