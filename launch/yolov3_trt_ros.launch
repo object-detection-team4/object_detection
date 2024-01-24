@@ -13,7 +13,7 @@
   </node>
 
   <node name="yolov3_trt_ros" pkg="yolov3_trt_ros" type="trt_detection.py" output="screen" />
-  <node name="trt_driver" pkg="yolov3_trt_ros" type="trt_drive.py" output="screen" />
+  <!-- <node name="trt_driver" pkg="yolov3_trt_ros" type="trt_drive.py" output="screen" /> -->
 
     <!-- motor node -->
   <include file="$(find xycar_motor)/launch/xycar_motor.launch" />

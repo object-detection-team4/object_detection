@@ -69,7 +69,7 @@ import calibration_parser
 TRT_LOGGER = trt.Logger(trt.Logger.WARNING)
 
 CFG = "/home/nvidia/xycar_ws/src/yolov3_trt_ros/src/yolov3-tiny_tstl_416.cfg"
-TRT = '/home/nvidia/xycar_ws/src/yolov3_trt_ros/src/model_epoch2700.trt'
+TRT = '/home/nvidia/xycar_ws/src/yolov3_trt_ros/src/model_epoch3950.trt'
 NUM_CLASS = 9
 #INPUT_IMG = '/home/nvidia/xycar_ws/src/yolov3_trt_ros/src/video1_2.png'
 CALIBRATION = '/home/nvidia/xycar_ws/src/xycar_device/usb_cam/calibration/ost.yaml'
@@ -169,7 +169,7 @@ class yolov3_trt(object):
                 cv2.imshow("grid", grid_image)
                 cv2.waitKey(1)
 
-             #publish detected objects boxes and classes
+            #publish detected objects boxes and classes
             self.publisher(boxes, scores, classes, grid_points)
 
     def _write_message(self, detection_results, boxes, scores, classes, grid_points):
@@ -279,8 +279,9 @@ def return_boxpoint(grid_image, bboxes, categories, all_categories):
         y = estimation_distance[1]
         z = estimation_distance[2]
 
+        point = (int(x // z) * 2, int(y // z) * 2)
         grid_point = (int(x // z) * 2 + 270, 540 - int(y // z) * 2)
-        grid_points.append(grid_point)
+        grid_points.append(point)
         cv2.circle(grid_image, (grid_point), 10, (0, 255, 0), -1)
         cv2.putText(grid_image, '{}'.format(all_categories[category]), (grid_point[0], grid_point[1] - 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
