@@ -84,7 +84,7 @@ class yolov3_trt(object):
         self.num_class = NUM_CLASS
         width, height, masks, anchors = parse_cfg_wh(self.cfg_file_path)
         self.engine_file_path = TRT
-        self.show_img = False
+        self.show_img = True
 
         _, _, self.homography = calibration_parser.read_yaml_file(CALIBRATION)
 
@@ -154,8 +154,9 @@ class yolov3_trt(object):
             fps = 1 / latency
 
             # find points on grid
-            grid_image = cv2.imread(GRID)
+            grid_image = cv2.imread(GRID, cv2.IMREAD_COLOR)
             grid_image, grid_points = return_boxpoint(grid_image, boxes, classes, ALL_CATEGORIES)
+            out_grid.write(grid_image)
 
             # Draw the bounding boxes onto the original input image and save it as a PNG file
             # print(boxes, classes, scores)
@@ -165,8 +166,9 @@ class yolov3_trt(object):
                 obj_detected_img_np = np.array(obj_detected_img)
                 show_img = cv2.cvtColor(obj_detected_img_np, cv2.COLOR_RGB2BGR)
                 cv2.putText(show_img, "FPS:" + str(int(fps)), (10,50),cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 2, 1)
-                cv2.imshow("result", show_img)
-                cv2.imshow("grid", grid_image)
+                # cv2.imshow("result", show_img)
+                # cv2.imshow("grid", grid_image)
+                out_img.write(show_img)
                 cv2.waitKey(1)
 
             #publish detected objects boxes and classes
@@ -301,5 +303,11 @@ def get_engine(engine_file_path=""):
 if __name__ == '__main__':
     yolo = yolov3_trt()
     rospy.init_node('yolov3_trt_ros', anonymous=True)
+
+    fourcc = cv2.VideoWriter_fourcc(*'DIVX')
+    out_img = cv2.VideoWriter('/home/nvidia/xycar_ws/src/yolov3_trt_ros/output/detection.avi', fourcc, 15, (416,416))
+    out_grid = cv2.VideoWriter('/home/nvidia/xycar_ws/src/yolov3_trt_ros/output/bev.avi', fourcc, 15, (540, 540))
     yolo.detect()
+    out_img.release()
+    out_grid.release()
 
