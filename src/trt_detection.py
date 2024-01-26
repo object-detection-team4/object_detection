@@ -84,7 +84,7 @@ class yolov3_trt(object):
         self.num_class = NUM_CLASS
         width, height, masks, anchors = parse_cfg_wh(self.cfg_file_path)
         self.engine_file_path = TRT
-        self.show_img = True
+        self.show_img = False
 
         _, _, self.homography = calibration_parser.read_yaml_file(CALIBRATION)
 
@@ -155,6 +155,7 @@ class yolov3_trt(object):
 
             # find points on grid
             grid_image = cv2.imread(GRID)
+            grid_image, grid_points = return_boxpoint(grid_image, boxes, classes, ALL_CATEGORIES)
 
             # Draw the bounding boxes onto the original input image and save it as a PNG file
             # print(boxes, classes, scores)
@@ -162,7 +163,6 @@ class yolov3_trt(object):
                 img_show = np.array(np.transpose(image[0], (1,2,0)) * 255, dtype=np.uint8)
                 obj_detected_img = draw_bboxes(Image.fromarray(img_show), boxes, scores, classes, ALL_CATEGORIES)
                 obj_detected_img_np = np.array(obj_detected_img)
-                grid_image, grid_points = return_boxpoint(grid_image, boxes, classes, ALL_CATEGORIES)
                 show_img = cv2.cvtColor(obj_detected_img_np, cv2.COLOR_RGB2BGR)
                 cv2.putText(show_img, "FPS:" + str(int(fps)), (10,50),cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 2, 1)
                 cv2.imshow("result", show_img)

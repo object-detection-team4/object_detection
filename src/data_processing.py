@@ -139,7 +139,6 @@ class PreprocessYOLO(object):
         new_resolution = (self.yolo_input_resolution[0], self.yolo_input_resolution[1])
         height, width = image.shape[:2]
         intrinsic = self.intrinsic.reshape(3, 3)
-        newcameramtx, _ = cv2.getOptimalNewCameraMatrix(intrinsic, self.extrinsic, (width, height), 1, (width, height))
         mapx, mapy = cv2.initUndistortRectifyMap(intrinsic, self.extrinsic, None, None, (width, height), 5)
         image = cv2.remap(image, mapx, mapy, cv2.INTER_LINEAR)
         image_raw = cv2.resize(image, new_resolution, interpolation=cv2.INTER_LINEAR)
